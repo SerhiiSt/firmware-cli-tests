@@ -1,0 +1,56 @@
+11:29:50 TX PING
+11:29:51 RX {"status":"OK","command":"PING"}   (1.33s)
+11:29:51 TX PING
+11:29:53 RX {"status":"OK","command":"PING"}   (1.37s)
+11:29:53 TX PING
+11:29:55 RX {"status":"OK","command":"PING"}   (1.37s)
+11:29:55 TX PING
+11:29:56 RX {"status":"OK","command":"PING"}   (1.36s)
+11:29:56 TX PING
+11:29:58 RX {"status":"OK","command":"PING"}   (1.37s)
+11:30:00 TX GET TEMP
+11:30:01 RX {"status":"OK","temperature":24.5   (0.35s)
+11:30:01 TX GET TEMP
+11:30:01 RX {"status":"OK","temperature":24.5   (0.28s)
+11:30:01 TX GET TEMP
+11:30:02 RX {"status":"OK","temperature":24.5   (0.23s)
+11:30:04 TX SET PWM 99
+11:30:05 RX {"status":"OK","pwm":99}   (0.34s)
+11:30:05 TX SET PWM 100
+11:30:05 RX {"status":"ERROR","code":"INVALID_VALUE"}   (0.37s)
+11:30:05 TX SET PWM 101
+11:30:06 RX {"status":"ERROR","code":"INVALID_VALUE"}   (0.36s)
+11:30:06 TX STATUS
+11:30:07 RX {"status":"OK","led":true,"pwm":252,"heap":349852}   (0.41s)
+11:30:09 TX SET PWM 1
+11:30:09 RX {"status":"OK","pwm":1}   (0.41s)
+11:30:10 TX STATUS
+11:30:10 RX {"status":"OK","led":true,"pwm":2,"heap":349852}   (0.39s)
+11:30:10 TX SET PWM 50
+11:30:11 RX {"status":"OK","pwm":50}   (0.33s)
+11:30:11 TX STATUS
+11:30:11 RX {"status":"OK","led":true,"pwm":127,"heap":349852}   (0.33s)
+11:30:12 TX SET PWM 99
+11:30:12 RX {"status":"OK","pwm":99}   (0.35s)
+11:30:12 TX STATUS
+11:30:13 RX {"status":"OK","led":true,"pwm":252,"heap":349852}   (0.43s)
+11:30:15 TX SET LED ON
+11:30:16 RX {"status":"OK","led":true}   (0.35s)
+11:30:16 TX SET PWM 50
+11:30:16 RX {"status":"OK","pwm":50}   (0.30s)
+11:30:16 TX STATUS
+11:30:17 RX {"status":"OK","led":true,"pwm":127,"heap":349852}   (0.36s)
+11:30:17 TX RESET
+11:30:17 RX {"status":"OK","reset":true}   (0.39s)
+11:30:18 TX STATUS
+11:30:18 RX {"status":"OK","led":true,"pwm":127,"heap":349852}   (0.38s)
+11:30:20 TX FOO
+11:30:21 RX {"status":"ERROR","code":"UNKNOWN_COMMAND"}   (0.36s)
+11:30:23 TX NO_RESPONSE
+11:30:28 RX <no response, timeout after 5.06s>
+11:30:33 TX RESET
+11:30:34 RX {"status":"OK","reset":true}   (0.39s)
+11:30:34 TX SET LED OFF
+11:30:34 RX {"status":"OK","led":false}   (0.28s)
+11:30:34 TX SET PWM 0
+11:30:35 RX {"status":"OK","pwm":0}   (0.23s)

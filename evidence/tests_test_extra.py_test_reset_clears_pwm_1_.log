@@ -1,0 +1,29 @@
+Test: tests/test_extra.py::test_reset_clears_pwm[1]
+Saved: 2026-10-19 11:42:44
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:42:41 TX RESET
+11:42:41 RX {"status":"OK","reset":true}   (0.22s)
+11:42:41 TX SET LED OFF
+11:42:42 RX {"status":"OK","led":false}   (0.24s)
+11:42:42 TX SET PWM 0
+11:42:42 RX {"status":"OK","pwm":0}   (0.23s)
+11:42:42 TX SET PWM 1
+11:42:42 RX {"status":"OK","pwm":1}   (0.28s)
+11:42:42 TX RESET
+11:42:43 RX {"status":"OK","reset":true}   (0.45s)
+11:42:43 TX STATUS
+11:42:44 RX {"status":"OK","led":true,"pwm":2,"heap":350116}   (0.44s)
+
+=== pytest failure ===
+device = <device.Device object at 0x7fbb2806f460>, pwm = 1
+
+    @pytest.mark.parametrize("pwm", [1, 50, 99])
+    def test_reset_clears_pwm(device, pwm):
+        device.command(f"SET PWM {pwm}")
+        assert device.command("RESET")["status"] == "OK"
+>       assert device.command("STATUS")["pwm"] == 0
+E       assert 2 == 0
+
+tests/test_extra.py:82: AssertionError

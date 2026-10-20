@@ -1,0 +1,29 @@
+Test: tests/test_relay.py::test_reset_restores_safe_state
+Saved: 2026-10-19 11:45:12
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:45:10 TX RESET
+11:45:10 RX {"status":"OK","reset":true}   (0.27s)
+11:45:10 TX SET LED OFF
+11:45:10 RX {"status":"OK","led":false}   (0.25s)
+11:45:11 TX SET PWM 0
+11:45:11 RX {"status":"OK","pwm":0}   (0.25s)
+11:45:11 TX SET LED ON
+11:45:11 RX {"status":"OK","led":true}   (0.25s)
+11:45:11 TX RESET
+11:45:12 RX {"status":"OK","reset":true}   (0.25s)
+11:45:12 TX STATUS
+11:45:12 RX {"status":"OK","led":true,"pwm":255,"heap":349852}   (0.24s)
+
+=== pytest failure ===
+device = <device.Device object at 0x7fbb27fe9fd0>
+
+    def test_reset_restores_safe_state(device):
+        device.command("SET LED ON")
+        device.command("RESET")
+        status = device.command("STATUS")
+>       assert status["pwm"] == 0
+E       assert 255 == 0
+
+tests/test_relay.py:9: AssertionError

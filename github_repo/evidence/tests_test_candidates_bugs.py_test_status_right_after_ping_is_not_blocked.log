@@ -1,0 +1,37 @@
+Test: tests/test_candidates_bugs.py::test_status_right_after_ping_is_not_blocked
+Saved: 2026-10-19 11:36:18
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:36:15 TX RESET
+11:36:16 RX {"status":"OK","reset":true}   (0.25s)
+11:36:16 TX SET LED OFF
+11:36:16 RX {"status":"OK","led":false}   (0.23s)
+11:36:16 TX SET PWM 0
+11:36:16 RX {"status":"OK","pwm":0}   (0.23s)
+11:36:16 TX b'PING\nSTATUS\n'
+11:36:18 RX {"status":"OK","command":"PING"}   (1.35s)
+11:36:18 RX {"status":"OK","led":false,"pwm":0,"heap":350116}   (1.45s)
+
+=== pytest failure ===
+device = <device.Device object at 0x7fbb27fe9a30>
+record_property = <function record_property.<locals>.append_property at 0x7fbb2802d4c0>
+
+    def test_status_right_after_ping_is_not_blocked(device, record_property):
+        """evidence: PING and STATUS are sent in one write. If PING blocks the
+        firmware, STATUS is answered only after PING (~1.3 s) and misses the
+        1.0 s harness timeout. Every other command answers in 0.2-0.4 s."""
+        replies = send_and_time(device, b"PING\nSTATUS\n", count=2)
+        t_ping, _ = find_reply(replies, lambda r: r.get("command") == "PING")
+        t_status, _ = find_reply(replies, lambda r: "heap" in r)
+        record_property("ping_reply_s", None if t_ping is None else round(t_ping, 2))
+        record_property("status_reply_s", None if t_status is None else round(t_status, 2))
+        assert t_ping is not None, f"no PING reply: {replies!r}"
+        assert t_status is not None, f"no STATUS reply: {replies!r}"
+>       assert t_status < HARNESS_TIMEOUT, (
+            f"STATUS answered after {t_status:.2f}s (PING after {t_ping:.2f}s): PING blocks the queue"
+        )
+E       AssertionError: STATUS answered after 1.45s (PING after 1.35s): PING blocks the queue
+E       assert 1.4511564409999949 < 1.0
+
+tests/test_candidates_bugs.py:81: AssertionError

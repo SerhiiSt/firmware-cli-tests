@@ -1,0 +1,28 @@
+Test: tests/test_extra.py::test_reset_turns_led_off
+Saved: 2026-10-19 11:43:03
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:43:01 TX RESET
+11:43:01 RX {"status":"OK","reset":true}   (0.24s)
+11:43:01 TX SET LED OFF
+11:43:01 RX {"status":"OK","led":false}   (0.23s)
+11:43:01 TX SET PWM 0
+11:43:02 RX {"status":"OK","pwm":0}   (0.23s)
+11:43:02 TX SET LED ON
+11:43:02 RX {"status":"OK","led":true}   (0.24s)
+11:43:02 TX RESET
+11:43:03 RX {"status":"OK","reset":true}   (0.23s)
+11:43:03 TX STATUS
+11:43:03 RX {"status":"OK","led":true,"pwm":255,"heap":350116}   (0.24s)
+
+=== pytest failure ===
+device = <device.Device object at 0x7fbb280c03d0>
+
+    def test_reset_turns_led_off(device):
+        device.command("SET LED ON")
+        assert device.command("RESET")["status"] == "OK"
+>       assert device.command("STATUS")["led"] is False
+E       assert True is False
+
+tests/test_extra.py:88: AssertionError

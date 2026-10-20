@@ -1,0 +1,72 @@
+Test: tests/test_extra.py::test_temp_is_valid_value_or_sensor_error[1]
+Saved: 2026-10-19 11:43:13
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:43:11 TX RESET
+11:43:12 RX {"status":"OK","reset":true}   (0.27s)
+11:43:12 TX SET LED OFF
+11:43:12 RX {"status":"OK","led":false}   (0.24s)
+11:43:12 TX SET PWM 0
+11:43:12 RX {"status":"OK","pwm":0}   (0.23s)
+11:43:12 TX GET TEMP
+11:43:13 RX {"status":"OK","temperature":24.5   (0.29s)
+
+=== pytest failure ===
+self = <device.Device object at 0x7fbb28060280>, command = 'GET TEMP'
+timeout = None
+
+    def command(self, command, timeout=None):
+        raw = self.command_raw(command, timeout=timeout)
+        try:
+>           return json.loads(raw)
+
+device.py:88: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/Sergio/opt/anaconda3/lib/python3.9/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+/Users/Sergio/opt/anaconda3/lib/python3.9/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0x7fbb278dc2e0>
+s = '{"status":"OK","temperature":24.5', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+>           obj, end = self.scan_once(s, idx)
+E           json.decoder.JSONDecodeError: Expecting ',' delimiter: line 1 column 34 (char 33)
+
+/Users/Sergio/opt/anaconda3/lib/python3.9/json/decoder.py:353: JSONDecodeError
+
+The above exception was the direct cause of the following exception:
+
+device = <device.Device object at 0x7fbb28060280>, attempt = 1
+
+    @pytest.mark.parametrize("attempt", [1, 2, 3])
+    def test_temp_is_valid_value_or_sensor_error(device, attempt):
+>       r = device.command("GET TEMP")
+
+tests/test_extra.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <device.Device object at 0x7fbb28060280>, command = 'GET TEMP'
+timeout = None
+
+    def command(self, command, timeout=None):
+        raw = self.command_raw(command, timeout=timeout)
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as e:
+>           raise AssertionError(f"Invalid JSON from device: {raw!r}") from e
+E           AssertionError: Invalid JSON from device: '{"status":"OK","temperature":24.5'
+
+device.py:90: AssertionError

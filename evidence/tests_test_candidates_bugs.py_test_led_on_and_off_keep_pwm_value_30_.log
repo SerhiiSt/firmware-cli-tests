@@ -1,0 +1,51 @@
+Test: tests/test_candidates_bugs.py::test_led_on_and_off_keep_pwm_value[30]
+Saved: 2026-10-19 11:37:12
+Port: rfc2217://localhost:4000
+
+=== Device transcript (TX = to device, RX = from device) ===
+11:37:08 TX RESET
+11:37:08 RX {"status":"OK","reset":true}   (0.22s)
+11:37:08 TX SET LED OFF
+11:37:09 RX {"status":"OK","led":false}   (0.24s)
+11:37:09 TX SET PWM 0
+11:37:09 RX {"status":"OK","pwm":0}   (0.26s)
+11:37:09 TX SET PWM 30
+11:37:10 RX {"status":"OK","pwm":30}   (0.31s)
+11:37:10 TX STATUS
+11:37:10 RX {"status":"OK","led":true,"pwm":76,"heap":350116}   (0.34s)
+11:37:10 TX SET LED ON
+11:37:11 RX {"status":"OK","led":true}   (0.41s)
+11:37:11 TX STATUS
+11:37:11 RX {"status":"OK","led":true,"pwm":255,"heap":350116}   (0.27s)
+11:37:11 TX SET LED OFF
+11:37:12 RX {"status":"OK","led":false}   (0.23s)
+11:37:12 TX STATUS
+11:37:12 RX {"status":"OK","led":false,"pwm":0,"heap":350116}   (0.24s)
+
+=== pytest failure ===
+device = <device.Device object at 0x7fbb27ff3160>
+record_property = <function record_property.<locals>.append_property at 0x7fbb28049550>
+pwm = 30
+
+    @pytest.mark.parametrize("pwm", [0, 30, 99])
+    def test_led_on_and_off_keep_pwm_value(device, record_property, pwm):
+        """evidence: LED and PWM are separate outputs (requirements 2 and 7 list
+        them side by side). SET LED ON/OFF must not change the PWM value.
+        Measured so far: SET LED ON gives STATUS pwm 255. If this fails, report
+        it as a defect candidate AND as a question to the requirement owner
+        (requirement 4 only says 'output state changes accordingly')."""
+        device.command(f"SET PWM {pwm}")
+        before = device.command("STATUS")["pwm"]
+        device.command("SET LED ON")
+        after_on = device.command("STATUS")["pwm"]
+        device.command("SET LED OFF")
+        after_off = device.command("STATUS")["pwm"]
+        record_property("pwm_before", before)
+        record_property("pwm_after_led_on", after_on)
+        record_property("pwm_after_led_off", after_off)
+        assert before == raw_duty(pwm)
+>       assert after_on == before, f"SET LED ON changed pwm {before} -> {after_on}"
+E       AssertionError: SET LED ON changed pwm 76 -> 255
+E       assert 255 == 76
+
+tests/test_candidates_bugs.py:171: AssertionError
